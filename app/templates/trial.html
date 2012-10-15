@@ -1,0 +1,145 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div id="tabbar">
+    <div>
+        <ul>
+            <li class="first">
+                <a href="javascript:alert('Refresh');return false;" mask="/media/images/alert.png" mask2x="/media/images/alert@2x.png" animation="slidedown">
+                    <strong>refresh</strong>
+                </a>
+            </li>
+            <li class="second">
+                <a class="rewards_pressedtrial" href="#rewards">
+                    <strong>REWARDS</strong>
+                </a>
+            </li>
+            <li class="third">
+                <a href="javascript:alert('Help');return false;" mask="/media/images/alert.png" mask2x="/media/images/alert@2x.png" animation="slidedown">
+                    <strong>Help</strong>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div id="jqt"> 
+    <div class="current" id="home">
+        <div class="toolbar">
+            <h1>Appstream</h1>
+            <div class="toolbar_credits" >{{balance}} Credits</div>
+        </div>
+        <div class="s-scrollwrapper">
+            <div class="landing_page">
+                <div class="intro_text">Earn credits by downloading awesome free apps! </div>
+                <div class="intro_text sub_text">Use the credits to redeem exciting offers such as amazon and itunes gift cards.</div>
+                <ul class="rounded">
+                    <li>
+                        <a href="#referral">
+                            <img class="appimage" src="/media/images/alert@2x.png"/>
+                            <small class="credits rounded">200 Credits</small>
+                            <div class="appname">Refer a Friend</div>
+                            <div class="appdesc">Refer a friend and get 200 credits instantaneously</div>
+                        </a>
+                    </li>
+                    {% for row in data %}
+                        <li>
+                        {% if row.has_udid %}
+                            <a class="has_udid" href="#" action_url="{{row.action_url}}">
+                        {% else %}
+                            <a class="no_udid" href="#">
+                        {% endif %}
+                            {% if row.icon_url %}
+                                <img class="appimage" src="{{row.icon_url}}"/>
+                            {% endif %}
+                            <small class="credits rounded">500 Credits</small>
+                            <div class="appname">{{ row.app_name }}</div>
+                            <div class="appdesc">{{ row.description|slice:"0:100"}} </div>
+                        </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div id="rewards">
+        <div class="toolbar">
+            <a class="back" href="#home">Back</a>
+            <h1>Rewards</h1>
+            <div class="toolbar_credits my_credits" val="{{balance}}">{{balance}} Credits</div>
+        </div>
+        <div class="s-scrollwrapper">
+            <div class="landing_page">
+                <div class="intro_text">Redeem your credits to get gift cards! </div>
+                <div class="intro_text sub_text">Use the credits to redeem exciting offers such as amazon and itunes gift cards.</div>
+                <ul class="rounded">
+                    {% for row in rewards %}
+                        <li>
+                        <a class="{{class_name}}" href="#" email="{{email}}" user_id="{{user_id}}" rewards_no={{row.id}}>
+                            {% if row.image_url %}
+                                <img class="appimage" src="{{row.image_url}}"/>
+                            {% endif %}
+                            <small class="credits rounded" val={{row.credits_worth}}>{{row.credits_worth}} Credits</small>
+                            <div class="appname">{{ row.name }}</div>
+                            <div class="appdesc">{{ row.desc}} </div>
+                        </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="disclaimer">*Amazon.com is not a sponsor of this promotion. Except as required by law, Amazon.com Gift Cards ("GCs") cannot be transferred for value or redeemed for cash. GCs may be used only for purchases of eligible goods on Amazon.com or certain of its affiliated websites. For complete terms and conditions, see www.amazon.com/gc-legal. GCs are issued by ACI Gift Cards, Inc., a Washington corporation. ©,®,™ Amazon.com Inc. and/or its affiliates, 2012. No expiration date or service fees.</div>
+            </div>
+        </div>
+    </div>
+    <div id="referral">
+        <div class="toolbar">
+            <a class="back" href="#home">Back</a>
+            <h1>Referral</h1>
+            <div class="toolbar_credits my_credits" val="{{balance}}">{{balance}} Credits</div>
+        </div>
+        <div class="s-scrollwrapper">
+            <div class="landing_page">
+                <div class="intro_text">Refer a friend and earn credits! </div>
+                <div class="intro_text sub_text">Spread the word amongst friends and earn credits. You wont earn credits for post on the same medium if they are not 7 days apart.</div>
+            <ul class="rounded">
+                <li>
+                    {% if class_name|stringformat:"s" == "no_udid"  %}
+                        <a class="no_udid">
+                    {% else %}
+                        <a class="facebook_refer">
+                    {% endif %}
+                        <img class="appimage" src="/media/images/facebook.png" />
+                        <small class="credits rounded">200 Credits</small>
+                        <div class="appname">Post on Wall</div>
+                        <div class="appdesc">Earn 200 credits by posting on your facebook wall</div>
+                    </a>
+                </li>
+                <li>
+                    {% if class_name|stringformat:"s" == "no_udid"  %}
+                        <a class="no_udid">
+                    {% else %}
+                        <a class="twitter_refer">
+                    {% endif %}
+                        <img class="appimage" src="/media/images/twitter.png" />
+                        <small class="credits rounded">200 Credits</small>
+                        <div class="appname">Tweet</div>
+                        <div class="appdesc">Earn 200 credits by posting on your twitter timeline</div>
+                    </a>
+                </li>
+                <li>
+                    {% if class_name|stringformat:"s" == "no_udid"  %}
+                        <a class="no_udid">
+                    {% else %}
+                        <a class="email_refer">
+                    {% endif %}
+                        <img class="appimage" src="/media/images/email.jpeg" />
+                        <small class="credits rounded">200 Credits</small>
+                        <div class="appname">Email a Friend</div>
+                        <div class="appdesc">Earn 200 credits by emailing your friend</div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

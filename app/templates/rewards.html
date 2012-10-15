@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="tabbar">
+    <div>
+        <ul>
+            <li class="first">
+                <a href="javascript:alert('Refresh');return false;" mask="/media/images/alert.png" mask2x="/media/images/alert@2x.png" animation="slidedown">
+                    <strong>refresh</strong>
+                </a>
+            </li>
+            <li class="second">
+                <a class="home_pressed" href="#">
+                    <strong>Home</strong>
+                </a>
+            </li>
+            <li class="third">
+                <a href="javascript:alert('Help');return false;" mask="/media/images/alert.png" mask2x="/media/images/alert@2x.png" animation="slidedown">
+                    <strong>Help</strong>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<div id="jqt"> 
+    <div class="current" id="home">
+        <div class="toolbar">
+            <h1>Appstream</h1>
+            <div class="toolbar_credits" val="{{balance}}">{{balance}} Credits</div>
+        </div>
+        <div class="s-scrollwrapper">
+            <div class="landing_page">
+                <div class="intro_text">Redeem your credits to get gift cards! </div>
+                <div class="intro_text sub_text">Use the credits to redeem exciting offers such as amazon and itunes gift cards.</div>
+                <ul class="rounded">
+                    <li><a href="https://api.twitter.com/1.1/statuses/update.json?status=test">Test</a></li>
+                    <li><a href="mailto:swapan.rajdev@gmail.com" onclick="window.location.href='/trial/'">Second</a></li>
+                    {% for row in data %}
+                        <li>
+                        {% if has_udid %}
+                            {% if has_email %}
+                                <a class="has_email" href="#" email="{{email}}">
+                            {% else %}
+                                <a class="no_email" href="#" user_id="{{user_id}}" >
+                            {% endif %}
+                        {% else %}
+                            <a class="no_udid" href="#">
+                        {% endif %}
+                            {% if row.image_url %}
+                                <img class="appimage" src="{{row.image_url}}"/>
+                            {% endif %}
+                            <small class="credits rounded">{{row.credits_worth}} Credits</small>
+                            <div class="appname">{{ row.name }}</div>
+                            <div class="appdesc">{{ row.desc|slice:"0:50"}} </div>
+                        </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

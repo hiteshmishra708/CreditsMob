@@ -1,0 +1,11 @@
+Hello,
+
+Thank you for using appstream. You’re just one step away from redeeming exciting rewards!
+
+Please click on the activation link below to verify your email address is correct.
+
+Activation link: {{email_link}}
+
+
+Thanks,
+CreditsMob Team
