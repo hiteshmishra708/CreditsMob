@@ -102,8 +102,8 @@ def get_user_using_hash(hash_id):
         return None
     return user
 
-def add_balance_to_udid(udid_hash, credits=500):
-    user = User.objects.get(udid_hash=udid_hash)
+def add_balance_to_udid(udid, credits=500):
+    user = User.objects.get(udid=udid)
     if not user:
         raise Exception
     try:
