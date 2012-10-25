@@ -70,7 +70,7 @@ def home(request, display=None):
         if request.GET.get('post_id'):
             to_credit = social_shared(user_id, const.kSHARED_FACEBOOK)
             if to_credit:
-                add_balance_to_udid(udid,200)
+                add_balance_to_udid(user.udid_hash,200)
         if email:
             class_name = 'has_email'
             if not user.email_verified:
