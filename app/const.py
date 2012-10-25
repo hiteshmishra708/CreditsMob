@@ -1,5 +1,6 @@
 kUDID_COOKIE = 'udid'
-kAPP_USER_COOKIE = 'app_user_id'
+kAPP_USER_ID = 'app_user_id'
+kAPP_USER_COOKIE = 'credits_user_cookie'
 kAPP_SESSION_ID = 'app_session_id'
 
 
@@ -32,7 +33,7 @@ kITUNES = 3
 REWARD_TYPES_LIST = [kAMAZON_5, kAMAZON_10, kITUNES]
 
 
-kFACEBOOKPOST_URL = 'http://www.facebook.com/dialog/feed?app_id=122537121128186&link=http%3A%2F%2Fsrajdev.com%2Ftrial&picture=http%3A%2F%2Fsrajdev.com%2Fmedia%2Fimages%2Falert.png&name=AppStream&caption=Earn+money+using+our+app&description=Earn+Money+via+us&redirect_uri=http://srajdev.com/trial'
+kFACEBOOKPOST_URL = 'http://www.facebook.com/dialog/feed?app_id=122537121128186&link=http%3A%2F%2Fsrajdev.com%2Fm&picture=http%3A%2F%2Fsrajdev.com%2Fmedia%2Fimages%2Falert.png&name=AppStream&caption=Earn+money+using+our+app&description=Earn+Money+via+us&redirect_uri=http://srajdev.com/m'
 
-kFACEBOOK_PARAMS='pp_id=122537121128186&link=http://srajdev.com/trial&picture=http://srajdev.com/media/images/alert.png&name=AppStream&caption=Spread the word and make money&description=Join and make money&redirect_uri=http://srajdev.com/trial'
+kFACEBOOK_PARAMS='pp_id=122537121128186&link=http://srajdev.com/m&picture=http://srajdev.com/media/images/alert.png&name=AppStream&caption=Spread the word and make money&description=Join and make money&redirect_uri=http://srajdev.com/m'
 

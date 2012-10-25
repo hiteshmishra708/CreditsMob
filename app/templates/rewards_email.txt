@@ -1,0 +1,14 @@
+Hey there,
+
+Congratulations! Here is your CreditsMob reward you requested on {{request_time}}.
+
+E-Gift Card*: {{reward_code}}
+Amount: {{dollar_worth}}
+*never expires
+
+Want more? Visit http://www.creditsmob.com on your mobile phone now!
+
+Happy shopping!
+
+Thanks,
+CreditsMob team

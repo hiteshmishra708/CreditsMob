@@ -30,9 +30,10 @@ def put_and_send_email_for_user(user_id, email):
         return False
     #if user.email and user.email == email:
     #    return user
-    code = get_activation_code(email)
+    code = get_activation_code(email, user.udid)
     user.email = email
     user.email_activation = code
+    user.created_at = datetime.now()
     user.save()
     send_email_activation(user.email, user.email_activation)
     return user
@@ -55,11 +56,33 @@ def send_email_activation(email, activation_code):
     msg.attach_alternative(html_content, 'text/html')
     msg.send()
     
+
+def send_gift_card(email, rewards_row, claim_row):
+    text_template = get_template('rewards_email.txt')
+    html_template = get_template('rewards_email.html')
+    img_url = None
+    if rewards_row.reward_type in [const.kAMAZON_10, const.kAMAZON_5]:
+        img_url = 'http://srajdev.com/media/images/amazon_gift.jpeg'
+
+    data = Context({'request_time' : claim_row.created_at, 'img_url': img_url, 'reward_code': rewards_row.code, 'dollar_worth' : rewards_row.dollar_worth})
+    text_content = text_template.render(data)
+    html_content = html_template.render(data)
+
+    subject = 'CreditsMob - Your reward'
+    from_email = 'swapan@swapan.webfactional.com'
+    to = [email]
+    msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+    msg.attach_alternative(html_content, 'text/html')
+    msg.send()
     
 
 
-def get_activation_code(email):
-    email_key = email + '|' + const.kSECRET
+
+    
+
+
+def get_activation_code(email, udid):
+    email_key = email + '|' + udid + '|' + const.kSECRET
     code = hashlib.md5(email_key).hexdigest()
     return code
 
@@ -67,6 +90,13 @@ def get_activation_code(email):
 def get_user_using_id(user_id):
     try:
         user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return None
+    return user
+
+def get_user_using_hash(hash_id):
+    try:
+        user = User.objects.get(udid_hash=hash_id)
     except User.DoesNotExist:
         return None
     return user
@@ -113,6 +143,16 @@ def social_shared(user_id, method):
     return True
 
 
+def to_show_social(user_id, method):
+    try:
+        row = SocialShared.objects.get(user_id=user_id, method=method)
+        mod_time = row.modified_at.replace(tzinfo=None)
+        if (datetime.now() - mod_time)  < timedelta(days=7):
+            return False
+    except SocialShared.DoesNotExist:
+        pass
+    return True
+
 def reduce_inventory_and_balance(reward_no, user_id):
     error = None
     row = Rewards.objects.get(id=reward_no)
@@ -127,7 +167,7 @@ def reduce_inventory_and_balance(reward_no, user_id):
     user = Balance.objects.get(user_id=user_id)
     if user.balance < row.credits_worth:
         error = "Sorry you dont have enough credits to claim this award"
-        return False, error
+        return False, error, None
     user.balance -= row.credits_worth
     user.save()
     claim = RewardClaim()
@@ -135,4 +175,4 @@ def reduce_inventory_and_balance(reward_no, user_id):
     claim.reward_id = row.id
     claim.save()
     code = row.code
-    return True, code
+    return True, row, claim

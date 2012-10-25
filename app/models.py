@@ -7,6 +7,7 @@ class User(models.Model):
     email = models.CharField(max_length=250, null=True)
     email_activation = models.CharField(max_length=250, null=True)
     email_verified = models.BooleanField(default=False)
+    udid_hash = models.CharField(max_length=500)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
