@@ -19,6 +19,34 @@ class User(models.Model):
         return convert_to_dict(self)
 
 
+class SecurityCodes(models.Model):
+    user_id = models.IntegerField()
+    sec_code = models.CharField(max_length=500)
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return unicode_class(self)
+
+    def to_dict(self):
+        return convert_to_dict(self)
+
+
+class AppHistory(models.Model):
+    user_id = models.IntegerField()
+    app_name = models.CharField(max_length=500)
+    icon_url = models.CharField(max_length=500)
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return unicode_class(self)
+
+    def to_dict(self):
+        return convert_to_dict(self)
+
 class SocialShared(models.Model):
     user_id = models.IntegerField()
     method = models.IntegerField()

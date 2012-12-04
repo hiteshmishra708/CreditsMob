@@ -1,4 +1,4 @@
-from app.models import User, Balance, Rewards,SocialShared, RewardClaim
+from app.models import User, Balance, Rewards,SocialShared, RewardClaim, SecurityCodes, AppHistory
 import hashlib
 from app import const
 from django.core.mail import send_mail
@@ -102,9 +102,17 @@ def get_user_using_hash(hash_id):
         return None
     return user
 
-def add_balance_to_udid(udid, credits=500):
+def add_balance_to_udid(udid, credits=500, ip_addr=None, sec_code=None, app_name=None, icon_url=None):
     user = User.objects.get(udid=udid)
     if not user:
+        raise Exception
+    should_give_credit = check_for_credits(udid, sec_code)
+    if not should_give_credit:
+        print 'Not the right security matching code'
+        raise Exception
+    added_history = add_app_history(user, app_name, icon_url)
+    if not added_history:
+        print 'already downlaoded app'
         raise Exception
     try:
         balance = Balance.objects.get(user_id=user.id)
@@ -116,6 +124,32 @@ def add_balance_to_udid(udid, credits=500):
     balance.save()
     return balance
         
+def check_for_credits(udid, sec_code):
+    import hashlib
+    sec = '%s|%s|aksjdioew' % (udid, const.kSECRET)
+    return sec_code == hashlib.md5(sec).hexdigest()
+    #try:
+    #    row = SecurityCodes.objects.get(user_id=user.id)
+    #    if row.sec_code == sec_code:
+    #        return True
+    #except:
+    #    return False
+    #return False
+        
+def add_app_history(user, app_name, icon_url):
+    row = None
+    try:
+        row = AppHistory.objects.get(user_id=user.id, app_name=app_name)
+    except:
+        pass
+    if row:
+        return False
+    row = AppHistory()
+    row.user_id=user.id
+    row.app_name = app_name
+    row.icon_url = icon_url
+    row.save()
+    return True
 
 def get_rewards():
     return_list = []

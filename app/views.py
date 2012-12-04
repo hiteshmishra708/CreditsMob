@@ -80,7 +80,7 @@ def home(request, display=None):
         show_facebook = to_show_social(user_id, const.kSHARED_FACEBOOK) 
     else:
         class_name = 'no_udid'
-    recos = get_recommendations(ip_addr, udid)
+    recos = get_recommendations(ip_addr, udid, user)
     balance = get_balance(user)
     rewards = get_rewards()
     t = loader.get_template('trial.html')
@@ -96,10 +96,22 @@ def home(request, display=None):
 
 @csrf_exempt
 def apicallback(request):
+    print '*' * 40
+    print 'in api callback : ',
+    print request
+    print '*' * 40
     if not request.GET.get('udid'):
         return HttpResponse(False)
-    udid = request.GET.get('udid')
-    balace = add_balance_to_udid(udid)
+    try:
+        udid = request.GET.get('udid')
+        ip_addr = request.GET.get('addr')
+        sec_code = request.GET.get('sec')
+        app_name = request.GET.get('appName')
+        icon_url = request.GET.get('iconUrl')
+        balace = add_balance_to_udid(udid, sec_code = sec_code, app_name=app_name, icon_url=icon_url)
+    except Exception, e:
+        print 'EXCEPTIOn : ', e
+        print '---' * 40
     return HttpResponse(True) 
 
 
