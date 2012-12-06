@@ -54,6 +54,7 @@ def home(request, display=None):
     user_id = None
     class_name = None
     show_facebook= True
+    udid_hash = None
     if request.COOKIES.has_key(const.kAPP_USER_COOKIE):
         user = get_user_using_id(request.COOKIES.get(const.kAPP_USER_COOKIE))
     elif request.GET.get(const.kAPP_USER_ID):
@@ -63,6 +64,7 @@ def home(request, display=None):
 
     if user:
         udid = user.udid
+        udid_hash = user.udid_hash
 
     if udid:
         email = user.email
@@ -80,18 +82,38 @@ def home(request, display=None):
         show_facebook = to_show_social(user_id, const.kSHARED_FACEBOOK) 
     else:
         class_name = 'no_udid'
-    recos = get_recommendations(ip_addr, udid, user)
     balance = get_balance(user)
     rewards = get_rewards()
-    t = loader.get_template('trial.html')
-    c = Context({'data' : recos, 'balance' : balance, 'rewards' : rewards, 'email' : email, 'class_name' : class_name , 'user_id': user_id, 'show_facebook' : show_facebook})
+    t = loader.get_template('index.html')
+    c = Context({'balance' : balance, 'rewards' : rewards, 'email' : email, 'class_name' : class_name , 'user_id': user_id, 'show_facebook' : show_facebook, 'udid_hash': udid_hash})
     response = HttpResponse(t.render(c))
     if user:
-        print 'setting cookies'
         max_age = 365*24*60*60
         expires = datetime.datetime.strftime(datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age), "%a, %d-%b-%Y %H:%M:%S GMT")
         response.set_cookie(const.kAPP_USER_COOKIE, user.id, max_age=max_age, expires=expires) 
     return response
+
+
+@csrf_exempt
+def recos(request):
+    udid = None
+    user = None
+    ip_arrd = ip_addr = request.META['HTTP_X_FORWARDED_FOR']
+    udid_hash = request.GET.get('udid_hash')
+    udid_hash = udid_hash.strip()
+    if udid_hash == "none":
+        pass
+    else:
+        user = get_user_using_hash(udid_hash)
+    if user:
+        udid = user.udid
+    data = get_recommendations(ip_addr, udid, user)
+    c = Context({'data' : data})
+    t = loader.get_template('reco.html')
+    response = HttpResponse(t.render(c))
+    return response
+
+
 
 
 @csrf_exempt

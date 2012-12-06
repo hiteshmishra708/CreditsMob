@@ -35,7 +35,7 @@
                 <div class="intro_text">Instant shopping credits on the go!</div>
                 <div class="intro_text sub_text">Welcome to CreditsMob, the #1 mobile shopping
                 experience. Download and use partner apps for <b>at least 30 seconds</b>, and earn credits to redeem exciting rewards like Amazon.com and iTunes Gift Cards.</div>
-                <ul class="rounded">
+                <ul class="rounded recos">
                     {% if show_facebook %}
                     <li>
                         {% if class_name == "no_udid" %}
@@ -50,26 +50,17 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% for row in data %}
-                        <li>
-                        {% if row.has_udid %}
-                            <a class="has_udid" href="#" action_url="{{row.action_url}}">
-                        {% else %}
-                            <a class="no_udid" href="#">
-                        {% endif %}
-                            {% if row.icon_url %}
-                                <img class="appimage" src="{{row.icon_url}}"/>
-                            {% endif %}
-                            <small class="credits rounded">500 Credits</small>
-                            <div class="appname">{{ row.app_name }}</div>
-                            <div class="appdesc">{{ row.description|slice:"0:100"}} </div>
-                        </a>
-                        </li>
-                    {% endfor %}
                     <li>
-                        <a href="javascript:window.location.reload();" class="refresh">Refresh</a>
+                    <div class="loading">Loading ... </div>
                     </li>
                 </ul>
+            </div>
+            <div class="use_as_key">
+                {% if class_name == "no_udid" %}
+                    none
+                {% else %}
+                    {{ udid_hash }}
+                {% endif %}
             </div>
         </div>
     </div>

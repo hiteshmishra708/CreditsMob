@@ -33,7 +33,6 @@ def get_recommendations(ip_addr, udid=None, user=None):
         udid = kUDID
         has_udid = False
     url = 'http://api.flurry.com/appCircle/getRecommendations?apiAccessCode=%s&apiKey=%s&udid=%s&platform=%s&ipAddress=%s' % (kACCESS_CODE, 'H9WKFJTKJVNTTZV65JW2', udid, kPLATFORM, ip_addr)
-    print 'url : ', url
     headers = {'Accept' : 'application/json'}
     request = urllib2.Request(url, headers=headers)
     response = urllib2.urlopen(request)
@@ -56,7 +55,8 @@ def add_custom_params(row, udid, user, ip_addr):
     sec = '%s|%s|aksjdioew' % (udid, kSECRET)
     code = hashlib.md5(sec).hexdigest()
     row.action_url = row.action_url + '&c_user=' + user.udid_hash + '&c_addr=' + ip_addr + '&c_sec=' + code + '&c_appName=' + row.app_name + '&c_iconUrl=' + row.icon_url
-    print 'row : ' , row.action_url
+    print 'action url : ', row.action_url
+    row.action_url = row.action_url[:56] + 'thisisnotcoolbuddy' + row.action_url[56:]
     #try:
     #    sec_row = SecurityCodes.objects.get(user_id=user.id)
     #except:
