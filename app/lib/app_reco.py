@@ -41,10 +41,13 @@ def get_recommendations(ip_addr, udid=None, user=None):
     return_list = []
     try:
         for i in result_json['recommendation']:
-            a = App(i, has_udid)
-            if udid and user:
-                a = add_custom_params(a, udid, user, ip_addr)
-            return_list.append(a)
+            try:
+                a = App(i, has_udid)
+                if udid and user:
+                    a = add_custom_params(a, udid, user, ip_addr)
+                return_list.append(a)
+            except Exception, e:
+                print 'FAILED TO GET A RECO : '
     except Exception, e:
         print 'ECEPTION : ', e
         pass
