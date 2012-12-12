@@ -37,6 +37,7 @@ class AppHistory(models.Model):
     user_id = models.IntegerField()
     app_name = models.CharField(max_length=500)
     icon_url = models.CharField(max_length=500)
+    ip_addr = models.CharField(max_length=500)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)

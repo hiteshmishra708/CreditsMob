@@ -13,7 +13,7 @@ import urllib2
 import urllib
 from app import const
 
-from app.lib.app_reco import get_recommendations, get_balance
+from app.lib.app_reco import get_recommendations, get_balance, too_many_downloads
 from app.lib.db import *
 from django.core.mail import send_mail
 import datetime
@@ -108,7 +108,8 @@ def recos(request):
     if user:
         udid = user.udid
     data = get_recommendations(ip_addr, udid, user)
-    c = Context({'data' : data})
+    too_many = too_many_downloads(user)
+    c = Context({'data' : data, 'too_many' : too_many})
     t = loader.get_template('reco.html')
     response = HttpResponse(t.render(c))
     return response
@@ -130,7 +131,7 @@ def apicallback(request):
         sec_code = request.GET.get('sec')
         app_name = request.GET.get('appName')
         icon_url = request.GET.get('iconUrl')
-        balace = add_balance_to_udid(udid, sec_code = sec_code, app_name=app_name, icon_url=icon_url)
+        balace = add_balance_to_udid(udid, sec_code = sec_code, app_name=app_name, icon_url=icon_url, ip_addr=ip_addr)
     except Exception, e:
         print 'EXCEPTIOn : ', e
         print '---' * 40

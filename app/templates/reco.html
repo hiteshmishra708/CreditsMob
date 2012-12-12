@@ -1,7 +1,11 @@
 {% for row in data %}
 <li>
 {% if row.has_udid %}
-    <a class="has_udid" href="#" action_url="{{row.action_url}}">
+    {% if too_many %}
+        <a class="toomany" href="#">
+    {% else %}
+        <a class="has_udid" href="#" action_url="{{row.action_url}}">
+    {% endif %}
 {% else %}
     <a class="no_udid" href="#">
 {% endif %}

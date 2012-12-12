@@ -110,7 +110,7 @@ def add_balance_to_udid(udid, credits=500, ip_addr=None, sec_code=None, app_name
     if not should_give_credit:
         print 'Not the right security matching code'
         raise Exception
-    added_history = add_app_history(user, app_name, icon_url)
+    added_history = add_app_history(user, app_name, icon_url, ip_addr)
     if not added_history:
         print 'already downlaoded app'
         raise Exception
@@ -136,7 +136,7 @@ def check_for_credits(udid, sec_code):
     #    return False
     #return False
         
-def add_app_history(user, app_name, icon_url):
+def add_app_history(user, app_name, icon_url, ip_addr):
     row = None
     try:
         row = AppHistory.objects.get(user_id=user.id, app_name=app_name)
@@ -148,6 +148,7 @@ def add_app_history(user, app_name, icon_url):
     row.user_id=user.id
     row.app_name = app_name
     row.icon_url = icon_url
+    row.ip_addr = ip_addr
     row.save()
     return True
 
