@@ -4,7 +4,15 @@
     {% if too_many %}
         <a class="toomany" href="#">
     {% else %}
+        {% if class_name == 'no_email' %}
+            <a class="no_email" href="#" email="{{email}}" user_id="{{user_id}}">
+        {% endif %}
+        {% if class_name == 'not_verified' %}
+            <a class="not_verified" href="#" email="{{email}}" user_id="{{user_id}}">
+        {% endif %}
+        {% if class_name == "has_udid" %}
         <a class="has_udid" href="#" action_url="{{row.action_url}}">
+        {% endif %}
     {% endif %}
 {% else %}
     <a class="no_udid" href="#">
@@ -12,7 +20,7 @@
     {% if row.icon_url %}
         <img class="appimage" src="{{row.icon_url}}"/>
     {% endif %}
-    <small class="credits rounded">500 Credits</small>
+    <small class="credits rounded">{{row.credits_worth}} Credits</small>
     <div class="appname">{{ row.app_name }}</div>
     <div class="appdesc">{{ row.description|slice:"0:100"}} </div>
 </a>

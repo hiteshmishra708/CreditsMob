@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^ajax_send_reward/', 'app.views.ajax_send_reward'),
     url(r'^tos/', 'app.views.tos'),
     url(r'^not_allowed/', 'app.views.not_allowed'),
+    url(r'^sponsor_callback/', 'app.views.sponsor_callback'),
 
 
     # Uncomment the admin/doc line below to enable admin documentation:

@@ -36,7 +36,34 @@
                 <div class="intro_text sub_text">Welcome to CreditsMob, the #1 mobile shopping
                 experience. Download and use partner apps for <b>at least 30 seconds</b>, and earn credits to redeem exciting rewards like Amazon.com and iTunes Gift Cards.</div>
                 <ul class="rounded recos">
-                    {% if show_facebook %}
+                    {% if class_name == "no_email" %}
+                        <li>
+                            <a class="no_email singup" href="#" email="{{email}}" user_id="{{user_id}}">
+                            <img class="appimage" src="/media/images/Icon.png" />
+                            <div class="appname">Sing up!</div>
+                            <div class="appdesc">Please enter your email address</div>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if class_name == "not_verified" %}
+                        <li>
+                            <a class="not_verified signup" href="#" email="{{email}}" user_id="{{user_id}}">
+                            <img class="appimage" src="/media/images/Icon.png" />
+                            <div class="appname">Verify Email!</div>
+                            <div class="appdesc">Please verify your email address</div>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if class_name == "no_udid" %}
+                        <li>
+                            <a class="no_udid signup" href="#">
+                            <img class="appimage" src="/media/images/Icon.png" />
+                            <div class="appname">Register device!</div>
+                            <div class="appdesc">Please register your device</div>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if show_facebook and class_name != "no_udid" %}
                     <li>
                         {% if class_name == "no_udid" %}
                             <a class="no_udid">

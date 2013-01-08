@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 from django.http import HttpResponseRedirect
 import json
+import hashlib
 
 import pyapns.client
 import time
@@ -13,7 +14,7 @@ import urllib2
 import urllib
 from app import const
 
-from app.lib.app_reco import get_recommendations, get_balance, too_many_downloads
+from app.lib.app_reco import get_balance, too_many_downloads, get_all_recos
 from app.lib.db import *
 from django.core.mail import send_mail
 import datetime
@@ -98,20 +99,33 @@ def home(request, display=None):
 def recos(request):
     udid = None
     user = None
+    email = None
+    user_id = None
     ip_arrd = ip_addr = request.META['HTTP_X_FORWARDED_FOR']
     udid_hash = request.GET.get('udid_hash')
     udid_hash = udid_hash.strip()
     if udid_hash == "none":
+        class_name = "no_udid"
         pass
     else:
         user = get_user_using_hash(udid_hash)
     if user:
         udid = user.udid
-    data = get_recommendations(ip_addr, udid, user)
+        user_id = user.id
+        class_name = 'has_udid'
+        if user.email and not user.email_verified:
+            class_name = 'not_verified'
+            email = user.email
+        elif not user.email:
+            class_name = 'no_email'
+    data = get_all_recos(ip_addr, udid, user)
     too_many = too_many_downloads(user)
-    c = Context({'data' : data, 'too_many' : too_many})
-    t = loader.get_template('reco.html')
-    response = HttpResponse(t.render(c))
+    try:
+        c = Context({'data' : data, 'too_many' : too_many, 'class_name' : class_name, 'email' : email, 'user_id' : user_id})
+        t = loader.get_template('reco.html')
+        response = HttpResponse(t.render(c))
+    except Exception, e:
+        print 'exception :', e
     return response
 
 
@@ -131,11 +145,32 @@ def apicallback(request):
         sec_code = request.GET.get('sec')
         app_name = request.GET.get('appName')
         icon_url = request.GET.get('iconUrl')
-        balace = add_balance_to_udid(udid, sec_code = sec_code, app_name=app_name, icon_url=icon_url, ip_addr=ip_addr)
+        balace = add_balance_to_udid(udid, sec_code = sec_code, app_name=app_name, icon_url=icon_url, ip_addr=ip_addr, sec_check=True)
     except Exception, e:
         print 'EXCEPTIOn : ', e
         print '---' * 40
     return HttpResponse(True) 
+
+
+def sponsor_callback(request):
+    print '*' * 40
+    print 'in sponsor callback'
+    print request
+    print '*' * 40
+    try: 
+        uid = request.GET.get('uid')
+        credits = request.GET.get('amount')
+        token = request.GET.get('sid')
+        a = hashlib.sha1()
+        a.update(const.kSPONSOR_TOKEN + uid + credits)
+        chk_sum = a.hexdigest()
+        if token == chk_sum:
+            user = User.objects.get(id=int(uid))
+            add_balance_to_udid(user.udid, credits = int(credits))
+        return HttpResponse(True)
+    except Exception, e:
+        print 'EXEPOTIN in CALLBACk  ', e
+
 
 
 @csrf_exempt

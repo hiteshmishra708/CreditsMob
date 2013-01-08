@@ -101,6 +101,9 @@ class Rewards(models.Model):
 class RewardClaim(models.Model):
     user_id = models.IntegerField()
     reward_id = models.IntegerField()
+    claim_code = models.CharField(max_length=256, null=True)
+    request_id= models.CharField(max_length=256, null=True)
+    response_id= models.CharField(max_length=256, null=True)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)

@@ -1,6 +1,7 @@
 from app.models import User, Balance, Rewards,SocialShared, RewardClaim, SecurityCodes, AppHistory
 import hashlib
 from app import const
+from app.lib.aws_gc import *
 from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
@@ -62,10 +63,15 @@ def send_gift_card(email, rewards_row, claim_row):
     text_template = get_template('rewards_email.txt')
     html_template = get_template('rewards_email.html')
     img_url = None
-    if rewards_row.reward_type in [const.kAMAZON_10, const.kAMAZON_5]:
+    if rewards_row.reward_type in [const.kAMAZON_10, const.kAMAZON_5, const.kAMAZON_API_5, const.kAMAZON_API_10]:
         img_url = 'http://srajdev.com/media/images/amazon_gift.jpeg'
 
-    data = Context({'request_time' : claim_row.created_at, 'img_url': img_url, 'reward_code': rewards_row.code, 'dollar_worth' : rewards_row.dollar_worth})
+    if rewards_row.reward_type in const.API_REWARD_LIST:
+        reward_code = claim_row.claim_code
+    else:
+        reward_code = rewards_row.code
+
+    data = Context({'request_time' : claim_row.created_at, 'img_url': img_url, 'reward_code': reward_code, 'dollar_worth' : rewards_row.dollar_worth})
     text_content = text_template.render(data)
     html_content = html_template.render(data)
 
@@ -102,18 +108,19 @@ def get_user_using_hash(hash_id):
         return None
     return user
 
-def add_balance_to_udid(udid, credits=500, ip_addr=None, sec_code=None, app_name=None, icon_url=None):
+def add_balance_to_udid(udid, credits=500, ip_addr=None, sec_code=None, app_name=None, icon_url=None, sec_check=False):
     user = User.objects.get(udid=udid)
     if not user:
         raise Exception
-    should_give_credit = check_for_credits(udid, sec_code)
-    if not should_give_credit:
-        print 'Not the right security matching code'
-        raise Exception
-    added_history = add_app_history(user, app_name, icon_url, ip_addr)
-    if not added_history:
-        print 'already downlaoded app'
-        raise Exception
+    if sec_check:
+        should_give_credit = check_for_credits(udid, sec_code)
+        if not should_give_credit:
+            print 'Not the right security matching code'
+            raise Exception
+        added_history = add_app_history(user, app_name, icon_url, ip_addr)
+        if not added_history:
+            print 'already downlaoded app'
+            raise Exception
     try:
         balance = Balance.objects.get(user_id=user.id)
     except Balance.DoesNotExist:
@@ -191,15 +198,27 @@ def to_show_social(user_id, method):
 
 def reduce_inventory_and_balance(reward_no, user_id):
     error = None
+    claim_code = None
+    response_id = None
+    request_id = None
     row = Rewards.objects.get(id=reward_no)
-    if row.active ==0:
-        next_row = Rewards.objects.filter(active=1).filter(reward_type=row.reward_type)[:1]
-        if not next_row:
-            error = "Sorry we just ran out of this award, Please refresh the page to see the available rewards"
-            return False, error
-        row = next_row[0]
-    row.active = 0
-    row.save()
+    if row.reward_type in const.NON_API_LIST:
+        if row.active ==0:
+            next_row = Rewards.objects.filter(active=1).filter(reward_type=row.reward_type)[:1]
+            if not next_row:
+                error = "Sorry we just ran out of this award, Please refresh the page to see the available rewards"
+                return False, error
+            row = next_row[0]
+        row.active = 0
+        row.save()
+    elif row.reward_type in const.API_REWARD_LIST:
+        success, info_dict = create_amazon_gc(row.dollar_worth)
+        if success:
+            claim_code= info_dict[const.kCLAIM_CODE]
+            request_id = info_dict[const.kREQUEST_ID]
+            response_id = info_dict[const.kREPONSE_ID]
+        else:
+            return False, False, False
     user = Balance.objects.get(user_id=user_id)
     if user.balance < row.credits_worth:
         error = "Sorry you dont have enough credits to claim this award"
@@ -209,6 +228,9 @@ def reduce_inventory_and_balance(reward_no, user_id):
     claim = RewardClaim()
     claim.user_id= user_id
     claim.reward_id = row.id
+    claim.claim_code = claim_code
+    claim.request_id = request_id
+    claim.response_id = response_id
     claim.save()
     code = row.code
     return True, row, claim
