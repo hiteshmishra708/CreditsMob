@@ -17,9 +17,7 @@ from operator import itemgetter
 
 def get_all_recos(ip_addr, udid=None, user=None):
     flurry_recos = get_flurry_recommendations(ip_addr, udid, user)
-    print 'flurry length : ', len(flurry_recos)
     sponsor_recos = get_sponsor_reco(ip_addr, udid, user)
-    print 'sponsor length : ', len(sponsor_recos)
     return_list = [] + flurry_recos + sponsor_recos
     return_list = sorted(return_list,key= lambda k:k.credits_worth, reverse=True)
     return return_list
@@ -142,7 +140,6 @@ def get_sponsor_reco(ip_addr, udid=None, user=None):
                         if o_type['offer_type_id'] in [112]:
                             is_free = True
                     if is_free and valid_offer:
-                        print 'OFFER : ', offer
                         a = SponsorApp(offer, has_udid)
                         return_list.append(a)
             except Exception, e:

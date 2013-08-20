@@ -38,28 +38,28 @@
                 <ul class="rounded recos">
                     {% if class_name == "no_email" %}
                         <li>
-                            <a class="no_email singup" href="#" email="{{email}}" user_id="{{user_id}}">
+                            <a class="no_email singup" href="#" email="{{email}}" user_id="{{user_id}}" style="background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(lightBlue), to(lightBlue));">
                             <img class="appimage" src="/media/images/Icon.png" />
                             <div class="appname">Sing up!</div>
-                            <div class="appdesc">Please enter your email address</div>
+                            <div class="appdesc" style="padding-right:0;">Please provide your email to complete Sign Up and start using CreditsMob!</div>
                             </a>
                         </li>
                     {% endif %}
                     {% if class_name == "not_verified" %}
                         <li>
-                            <a class="not_verified signup" href="#" email="{{email}}" user_id="{{user_id}}">
+                            <a class="not_verified signup" href="#" email="{{email}}" user_id="{{user_id}}" style="background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(lightBlue), to(lightBlue));">
                             <img class="appimage" src="/media/images/Icon.png" />
                             <div class="appname">Verify Email!</div>
-                            <div class="appdesc">Please verify your email address</div>
+                            <div class="appdesc" style="padding-right:0;">Please verify your email address</div>
                             </a>
                         </li>
                     {% endif %}
                     {% if class_name == "no_udid" %}
                         <li>
-                            <a class="no_udid signup" href="#">
+                            <a class="no_udid signup" href="#" style="background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(lightBlue), to(lightBlue));">
                             <img class="appimage" src="/media/images/Icon.png" />
                             <div class="appname">Register device!</div>
-                            <div class="appdesc">Please register your device</div>
+                            <div class="appdesc" style="padding-right:0;">Please click here to register your device and get started with CreditsMob.</div>
                             </a>
                         </li>
                     {% endif %}
@@ -103,6 +103,10 @@
                 <div class="intro_text">Redeem credits for exciting rewards below! </div>
                 <div class="intro_text sub_text">Rewards are emailed to you within 48 hours of requesting!</div>
                 <ul class="rounded">
+                    {% if not rewards %}
+                    We are currently out of Gift Cards. We will have more gift cards for you soon. In the mean time, if you have any questions, please reach out to <a class="mail_link" href="mailto:support@creditsmob.com">support@creditsmob.comi</a>. Thank you for using CreditsMob!
+
+                    {% else %}
                     {% for row in rewards %}
                         <li>
                         <a class="{{class_name}}" href="#" email="{{email}}" user_id="{{user_id}}" rewards_no={{row.id}}>
@@ -115,6 +119,7 @@
                         </a>
                         </li>
                     {% endfor %}
+                    {% endif %}
                 </ul>
                 <div class="disclaimer">*Amazon.com is not a sponsor of this promotion. Except as required by law, Amazon.com Gift Cards ("GCs") cannot be transferred for value or redeemed for cash. GCs may be used only for purchases of eligible goods on Amazon.com or certain of its affiliated websites. For complete terms and conditions, see www.amazon.com/gc-legal. GCs are issued by ACI Gift Cards, Inc., a Washington corporation. ©,®,™ Amazon.com Inc. and/or its affiliates, 2012. No expiration date or service fees.</div>
             </div>

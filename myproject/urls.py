@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r'^tos/', 'app.views.tos'),
     url(r'^not_allowed/', 'app.views.not_allowed'),
     url(r'^sponsor_callback/', 'app.views.sponsor_callback'),
+    url(r'^download_balance_csv/', 'app.views.download_csv_balance_file'),
 
 
     # Uncomment the admin/doc line below to enable admin documentation:

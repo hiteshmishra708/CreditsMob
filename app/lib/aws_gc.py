@@ -4,6 +4,8 @@ import binascii
 from app import const
 import random
 from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
+import csv
+from app.models import Rewards
 
 
 def get_amazon_url(action, message_type, params):
@@ -153,4 +155,29 @@ def parse_aws_res(res, action='CreateGiftCard'):
         return_dict = {const.kERROR_CODE : error_code, const.kERROR_MESSGAE : error_info}
     return success, return_dict
 
-    
+
+def insert_amazon_file():
+    with open('/home/swapan/amazonGCTest.csv', 'rb') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        for row in reader:
+            a = Rewards()
+            if row[2].strip() == "$5.00":
+                a.name = '$5 Amazon.com Gift Card*'
+                a.credits_worth = 8000
+                a.dollar_worth = 5
+                a.reward_type = 1
+            elif row[2].strip() == "$10.00":
+                a.name = '$10 Amazon.com Gift Card*'
+                a.credits_worth = 15000
+                a.reward_type = 2
+            else:
+                print '*' * 40
+                print row[2].strip()
+                print 'NOT A RECOGNIZED DOLLAR VALUE, NOT INSERTED'
+                print ', '.join(row)
+                print '*' * 40
+                continue
+            a.desc = 'Never expires'
+            a.image_url = '/media/images/amazon.png'
+            a.code = row[1]
+            a.save()

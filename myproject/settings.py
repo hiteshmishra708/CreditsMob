@@ -159,3 +159,25 @@ EMAIL_HOST_USER = 'batman'
 EMAIL_HOST_PASSWORD = 'Qwdfty13'
 DEFAULT_FROM_EMAIL = 'swapan@swapan.webfactional.com'
 SERVER_EMAIL = 'swapan@swapan.webfactional.com'
+
+
+THROTTLE_ZONES = {
+    'default': {
+        'VARY':'throttle.zones.RemoteIP',
+        'NUM_BUCKETS':2,  # Number of buckets worth of history to keep. Must be at least 2
+        'BUCKET_INTERVAL': 50,  # Period of time to enforce limits.
+        'BUCKET_CAPACITY': 2  # Maximum number of requests allowed within BUCKET_INTERVAL
+        },
+    'ajax': {
+        'VARY':'throttle.zones.RemoteIP',
+        'NUM_BUCKETS':2,  # Number of buckets worth of history to keep. Must be at least 2
+        'BUCKET_INTERVAL': 60 * 5,  # Period of time to enforce limits.
+        'BUCKET_CAPACITY': 1  # Maximum number of requests allowed within BUCKET_INTERVAL
+        },
+}
+
+# Where to store request counts.
+THROTTLE_BACKEND = 'throttle.backends.cache.CacheBackend'
+#
+# # Force throttling when DEBUG=True
+THROTTLE_ENABLED = True

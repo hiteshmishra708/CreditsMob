@@ -7,6 +7,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
 from datetime import datetime, timedelta
+import time
 
 
 def create_user_by_udid(udid):
@@ -202,6 +203,10 @@ def reduce_inventory_and_balance(reward_no, user_id):
     response_id = None
     request_id = None
     row = Rewards.objects.get(id=reward_no)
+    user = Balance.objects.get(user_id=user_id)
+    if user.balance < row.credits_worth:
+        error = "Sorry you dont have enough credits to claim this award"
+        return False, error, None
     if row.reward_type in const.NON_API_LIST:
         if row.active ==0:
             next_row = Rewards.objects.filter(active=1).filter(reward_type=row.reward_type)[:1]
@@ -234,3 +239,21 @@ def reduce_inventory_and_balance(reward_no, user_id):
     claim.save()
     code = row.code
     return True, row, claim
+
+
+def create_balance_csv():
+    bal_rows = Balance.objects.filter(balance__gt = 0)
+    filename = 'balance_%s.csv' % int(time.time())
+    path_name= '/home/swapan/webapps/appstellar/myproject/app/lib/balance_files/'
+    with open( filename, 'w') as csvfile:
+        balwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        balwriter.writerow(['UDID', 'EMAIL', 'BALANCE'])
+        for row in bal_rows:
+            user = User.objects.get(id=row.user_id)
+            if user.email:
+                print user.email
+                balwriter.writerow([user.udid, user.email, row.balance])
+                break
+            else:
+                continue
+    return filename
